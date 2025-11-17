@@ -1,1 +1,842 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>이노로봇 자동화 솔루션 제안서</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
+    <style>
+        body { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        // --- Icons (Lucide React 대체) ---
+        const IconWrapper = ({ children, size = 24, className = "" }) => (
+            <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+                {children}
+            </svg>
+        );
+
+        const ChevronRight = (props) => <IconWrapper {...props}><polyline points="9 18 15 12 9 6" /></IconWrapper>;
+        const ChevronLeft = (props) => <IconWrapper {...props}><polyline points="15 18 9 12 15 6" /></IconWrapper>;
+        const FileText = (props) => <IconWrapper {...props}><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /><line x1="16" y1="13" x2="8" y2="13" /><line x1="16" y1="17" x2="8" y2="17" /><polyline points="10 9 9 9 8 9" /></IconWrapper>;
+        const Bot = (props) => <IconWrapper {...props}><rect x="3" y="11" width="18" height="10" rx="2" /><circle cx="12" cy="5" r="2" /><path d="M12 7v4" /><line x1="8" y1="16" x2="8" y2="16" /><line x1="16" y1="16" x2="16" y2="16" /></IconWrapper>;
+        const DollarSign = (props) => <IconWrapper {...props}><line x1="12" y1="1" x2="12" y2="23" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" /></IconWrapper>;
+        const TrendingUp = (props) => <IconWrapper {...props}><polyline points="23 6 13.5 15.5 8.5 10.5 1 18" /><polyline points="17 6 23 6 23 12" /></IconWrapper>;
+        const Factory = (props) => <IconWrapper {...props}><path d="M2 20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8l-7 5V8l-7 5V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z" /><line x1="17" y1="18" x2="17" y2="18" /><line x1="12" y1="18" x2="12" y2="18" /><line x1="7" y1="18" x2="7" y2="18" /></IconWrapper>;
+        const Download = (props) => <IconWrapper {...props}><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" /></IconWrapper>;
+        
+        // --- Main Component ---
+        const AutomationProposal = () => {
+          const [currentView, setCurrentView] = useState('home');
+          const [selectedSector, setSelectedSector] = useState(null);
+          const [selectedProcess, setSelectedProcess] = useState(null);
+
+          const sectors = {
+            metal: {
+              title: '금속 가공 분야',
+              icon: '⚙️',
+              color: 'from-gray-600 to-gray-800',
+              processes: [
+                {
+                  id: 'additive',
+                  name: '적층 제조 후 서포트 제거',
+                  problem: '3D 프린팅된 금속 부품의 서포트 면이 복잡한 곡면으로 이루어져 수작업 제거 시 품질 편차 발생',
+                  solution: '3D 스캐너와 AI 영상 인식 기반 적응형 직교로봇 시스템',
+                  benefits: ['작업 시간 60% 단축', '품질 균일성 95% 이상', '인건비 연 3,500만원 절감'],
+                  equipment: [
+                    { name: '3축 정밀 직교로봇', price: 35000000, qty: 1 },
+                    { name: '3D 비전 스캐너 시스템', price: 15000000, qty: 1 },
+                    { name: 'AI 영상처리 소프트웨어', price: 8000000, qty: 1 },
+                    { name: '서포트 제거 엔드이펙터', price: 5000000, qty: 1 },
+                    { name: '안전펜스 및 센서', price: 3000000, qty: 1 },
+                    { name: '설치 및 시운전', price: 8000000, qty: 1 },
+                    { name: '작업자 교육 (3일)', price: 2000000, qty: 1 }
+                  ],
+                  maintenance: 3800000,
+                  roi: 18
+                },
+                {
+                  id: 'welding',
+                  name: '용접 자동화',
+                  problem: '재질별 열전도율 차이와 두께 변동으로 용접 품질 불균일, 숙련공 부족',
+                  solution: '열화상 카메라 + 아크 센서 기반 실시간 피드백 용접 로봇',
+                  benefits: ['불량률 40% 감소', '생산성 70% 향상', '숙련공 의존도 해소'],
+                  equipment: [
+                    { name: '6축 용접 로봇', price: 45000000, qty: 1 },
+                    { name: '고속 열화상 카메라', price: 12000000, qty: 1 },
+                    { name: '용접 아크 센서 시스템', price: 8000000, qty: 1 },
+                    { name: '용접 토치 및 와이어 공급장치', price: 6000000, qty: 1 },
+                    { name: '흄 집진 시스템', price: 7000000, qty: 1 },
+                    { name: '포지셔너 및 지그', price: 9000000, qty: 1 },
+                    { name: '설치 및 시운전', price: 10000000, qty: 1 },
+                    { name: '작업자 교육 (5일)', price: 3000000, qty: 1 }
+                  ],
+                  maintenance: 5000000,
+                  roi: 22
+                },
+                {
+                  id: 'casting',
+                  name: '주조품 후처리',
+                  problem: '고온 환경에서 거칠고 불규칙한 주조품 표면 처리, 작업자 안전 위험',
+                  solution: '내열성 자동 연마 로봇 + 분진 제어 집진 시스템',
+                  benefits: ['작업자 안전사고 제로화', '처리 속도 50% 향상', '품질 안정성 확보'],
+                  equipment: [
+                    { name: '고내열성 연마 로봇', price: 52000000, qty: 1 },
+                    { name: '자동 그라인딩 엔드이펙터', price: 9000000, qty: 1 },
+                    { name: '대용량 집진 시스템', price: 15000000, qty: 1 },
+                    { name: '내열 센서 및 제어기', price: 7000000, qty: 1 },
+                    { name: '냉각 시스템', price: 6000000, qty: 1 },
+                    { name: '안전 시스템', price: 4000000, qty: 1 },
+                    { name: '설치 및 시운전', price: 11000000, qty: 1 },
+                    { name: '작업자 교육 (4일)', price: 2500000, qty: 1 }
+                  ],
+                  maintenance: 5300000,
+                  roi: 24
+                }
+              ]
+            },
+            plastic: {
+              title: '플라스틱 성형 분야',
+              icon: '🔷',
+              color: 'from-blue-600 to-blue-800',
+              processes: [
+                {
+                  id: 'flash',
+                  name: '사출 성형 후 플래시 제거',
+                  problem: '플래시 위치와 크기가 매번 달라 수동 조정 필요, 생산성 저하',
+                  solution: 'AI 비전 검사 + 유연 경로 생성 6축 로봇',
+                  benefits: ['검사 정확도 98%', '처리 속도 3배 향상', '인건비 연 4,200만원 절감'],
+                  equipment: [
+                    { name: '6축 정밀 로봇', price: 38000000, qty: 1 },
+                    { name: 'AI 비전 검사 시스템', price: 13000000, qty: 1 },
+                    { name: '자동 트리밍 툴', price: 6000000, qty: 1 },
+                    { name: '부품 이송 컨베이어', price: 8000000, qty: 1 },
+                    { name: '불량품 분류 시스템', price: 5000000, qty: 1 },
+                    { name: '설치 및 시운전', price: 7000000, qty: 1 },
+                    { name: '작업자 교육 (3일)', price: 2000000, qty: 1 }
+                  ],
+                  maintenance: 3900000,
+                  roi: 16
+                },
+                {
+                  id: 'rotation',
+                  name: '회전 성형 공정 자동화',
+                  problem: '두께 균일화와 냉각 시간 최적화 어려움, 불량률 높음',
+                  solution: 'PLC 연동 실시간 모니터링 + 냉각 통합 제어 시스템',
+                  benefits: ['불량률 35% 감소', '에너지 효율 25% 개선', '생산 사이클 단축'],
+                  equipment: [
+                    { name: '회전 성형 자동화 로봇', price: 42000000, qty: 1 },
+                    { name: 'PLC 통합 제어 시스템', price: 10000000, qty: 1 },
+                    { name: '실시간 온도 모니터링 센서', price: 6000000, qty: 1 },
+                    { name: '자동 냉각 시스템', price: 9000000, qty: 1 },
+                    { name: '금형 탈착 장치', price: 7000000, qty: 1 },
+                    { name: '설치 및 시운전', price: 8000000, qty: 1 },
+                    { name: '작업자 교육 (4일)', price: 2500000, qty: 1 }
+                  ],
+                  maintenance: 4200000,
+                  roi: 20
+                },
+                {
+                  id: 'multi',
+                  name: '다품종 소량 생산 대응',
+                  problem: '금형 교체 빈번, 설정 변경 시간 과다, 자동화 유연성 부족',
+                  solution: '모듈화 직교로봇 + AI 기반 자동 설정 소프트웨어',
+                  benefits: ['교체 시간 70% 단축', '셋업 오류 90% 감소', '다품종 대응력 향상'],
+                  equipment: [
+                    { name: '모듈형 3축 직교로봇', price: 32000000, qty: 1 },
+                    { name: 'AI 자동 설정 소프트웨어', price: 12000000, qty: 1 },
+                    { name: '퀵 체인지 그리퍼 시스템', price: 8000000, qty: 1 },
+                    { name: '자동 금형 교체 장치', price: 15000000, qty: 1 },
+                    { name: '비전 정렬 시스템', price: 7000000, qty: 1 },
+                    { name: '설치 및 시운전', price: 7000000, qty: 1 },
+                    { name: '작업자 교육 (3일)', price: 2000000, qty: 1 }
+                  ],
+                  maintenance: 4100000,
+                  roi: 19
+                }
+              ]
+            },
+            food: {
+              title: '식품 가공 분야',
+              icon: '🍱',
+              color: 'from-green-600 to-green-800',
+              processes: [
+                {
+                  id: 'packaging',
+                  name: '맞춤형 포장 및 분류',
+                  problem: '제품 크기·모양 다양, 로봇 그리퍼 맞춤 개발 필요, 포장 속도 저하',
+                  solution: '유연 적응형 그리퍼 + AI 비전 시스템',
+                  benefits: ['포장 속도 2배 향상', '제품 손상률 80% 감소', '다품종 동시 처리'],
+                  equipment: [
+                    { name: '델타 로봇 (고속 피킹)', price: 35000000, qty: 1 },
+                    { name: '유연 적응형 그리퍼', price: 9000000, qty: 1 },
+                    { name: 'AI 비전 인식 시스템', price: 11000000, qty: 1 },
+                    { name: '자동 포장 컨베이어', price: 12000000, qty: 1 },
+                    { name: '중량 선별 시스템', price: 6000000, qty: 1 },
+                    { name: '설치 및 시운전', price: 7000000, qty: 1 },
+                    { name: '작업자 교육 (3일)', price: 2000000, qty: 1 }
+                  ],
+                  maintenance: 4100000,
+                  roi: 17
+                },
+                {
+                  id: 'hygiene',
+                  name: '위생 안전 관리 자동화',
+                  problem: '접촉 부위 빈번한 청소 필요, 교차 오염 위험, 위생 기준 준수 어려움',
+                  solution: 'CIP 대응 자동 세척 로봇 + 공기막 시스템',
+                  benefits: ['위생 기준 100% 준수', '청소 시간 60% 단축', '교차오염 제로화'],
+                  equipment: [
+                    { name: '식품등급 스테인리스 로봇', price: 40000000, qty: 1 },
+                    { name: 'CIP 자동 세척 시스템', price: 18000000, qty: 1 },
+                    { name: '교차오염 방지 공기막 장치', price: 8000000, qty: 1 },
+                    { name: '위생 모니터링 센서', price: 6000000, qty: 1 },
+                    { name: '자동 소독 시스템', price: 7000000, qty: 1 },
+                    { name: '설치 및 시운전', price: 8000000, qty: 1 },
+                    { name: '작업자 교육 (4일)', price: 2500000, qty: 1 }
+                  ],
+                  maintenance: 4500000,
+                  roi: 21
+                },
+                {
+                  id: 'ergonomic',
+                  name: '근골격계 부하 작업 자동화',
+                  problem: '절임 배추 등 중량물 투입 작업, 작업자 부상 위험, 높은 피로도',
+                  solution: '힘 감지 센서 협동로봇 기반 투입 자동화',
+                  benefits: ['작업자 부상 제로화', '작업 효율 80% 향상', '근골격계 질환 예방'],
+                  equipment: [
+                    { name: '협동로봇 (20kg 가반하중)', price: 38000000, qty: 1 },
+                    { name: '힘/토크 센서 시스템', price: 9000000, qty: 1 },
+                    { name: '자동 투입 엔드이펙터', price: 7000000, qty: 1 },
+                    { name: '중량물 리프팅 장치', price: 10000000, qty: 1 },
+                    { name: '안전 협업 시스템', price: 5000000, qty: 1 },
+                    { name: '설치 및 시운전', price: 6000000, qty: 1 },
+                    { name: '작업자 교육 (3일)', price: 2000000, qty: 1 }
+                  ],
+                  maintenance: 3850000,
+                  roi: 19
+                }
+              ]
+            }
+          };
+
+          const formatPrice = (price) => {
+            return new Intl.NumberFormat('ko-KR').format(price);
+          };
+
+          const HomePage = () => (
+            <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+              {/* Hero Section */}
+              <div className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white py-16 px-6">
+                <div className="max-w-6xl mx-auto">
+                  <div className="flex items-center gap-3 mb-4">
+                    <Factory size={40} />
+                    <h1 className="text-4xl font-bold">이노로봇 자동화 솔루션</h1>
+                  </div>
+                  <p className="text-xl opacity-90 mb-6">작은 회사를 위한 맞춤형 자동화 제안서</p>
+                  <div className="bg-white/10 backdrop-blur-sm rounded-lg p-6 border border-white/20">
+                    <h2 className="text-lg font-semibold mb-3">📋 미션 개요</h2>
+                    <p className="mb-2"><strong>주제:</strong> 작은 회사를 위한 자동화 솔루션 제안서 만들기</p>
+                    <p className="mb-2"><strong>목표:</strong> 지역 공장 중 자동화가 어려운 공정을 찾아 이노로봇의 기술을 활용한 비용 효율적인 방안 설계</p>
+                    <p><strong>내용:</strong> 각 산업별 자동화 견적서와 로봇 역할도 제공</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Key Benefits */}
+              <div className="max-w-6xl mx-auto px-6 py-12">
+                <div className="grid md:grid-cols-3 gap-6 mb-12">
+                  <div className="bg-white rounded-xl p-6 shadow-lg border border-slate-200">
+                    <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
+                      <TrendingUp className="text-green-600" size={24} />
+                    </div>
+                    <h3 className="font-bold text-lg mb-2">평균 ROI 18개월</h3>
+                    <p className="text-slate-600 text-sm">중소기업 맞춤형 투자 회수 기간으로 빠른 효과 실현</p>
+                  </div>
+                  <div className="bg-white rounded-xl p-6 shadow-lg border border-slate-200">
+                    <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
+                      <Bot className="text-blue-600" size={24} />
+                    </div>
+                    <h3 className="font-bold text-lg mb-2">검증된 기술력</h3>
+                    <p className="text-slate-600 text-sm">정밀 직교로봇과 AI 비전 시스템 기반 완성도 높은 솔루션</p>
+                  </div>
+                  <div className="bg-white rounded-xl p-6 shadow-lg border border-slate-200">
+                    <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
+                      <DollarSign className="text-purple-600" size={24} />
+                    </div>
+                    <h3 className="font-bold text-lg mb-2">비용 효율적</h3>
+                    <p className="text-slate-600 text-sm">협동로봇 가격은 근로자 연봉 수준으로 부담 최소화</p>
+                  </div>
+                </div>
+
+                {/* Sector Selection */}
+                <h2 className="text-3xl font-bold mb-6 text-slate-800">산업 분야별 솔루션</h2>
+                <div className="grid md:grid-cols-3 gap-6">
+                  {Object.entries(sectors).map(([key, sector]) => (
+                    <button
+                      key={key}
+                      onClick={() => {
+                        setSelectedSector(key);
+                        setCurrentView('sector');
+                      }}
+                      className="bg-white rounded-xl p-6 shadow-lg border-2 border-slate-200 hover:border-blue-500 hover:shadow-xl transition-all group text-left"
+                    >
+                      <div className={`w-16 h-16 bg-gradient-to-br ${sector.color} rounded-xl flex items-center justify-center text-3xl mb-4 group-hover:scale-110 transition-transform`}>
+                        {sector.icon}
+                      </div>
+                      <h3 className="font-bold text-xl mb-2 text-slate-800">{sector.title}</h3>
+                      <p className="text-slate-600 text-sm mb-4">{sector.processes.length}개 공정 솔루션 제공</p>
+                      <div className="flex items-center text-blue-600 font-semibold">
+                        자세히 보기 <ChevronRight size={20} className="ml-1 group-hover:translate-x-1 transition-transform" />
+                      </div>
+                    </button>
+                  ))}
+                </div>
+
+                {/* Footer Info */}
+                <div className="mt-12 bg-gradient-to-r from-slate-800 to-slate-900 text-white rounded-xl p-8">
+                  <h3 className="text-2xl font-bold mb-4">이노로봇의 핵심 기술</h3>
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div>
+                      <h4 className="font-semibold mb-2 text-blue-300">• 정밀 직교로봇 시스템</h4>
+                      <p className="text-sm text-slate-300">2축/3축 구조의 고속·고정밀 모션 제어 기술</p>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold mb-2 text-blue-300">• AI 비전 검사 기술</h4>
+                      <p className="text-sm text-slate-300">3D 센서와 딥러닝 기반 실시간 품질 검사</p>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold mb-2 text-blue-300">• 맞춤형 자동화 설계</h4>
+                      <p className="text-sm text-slate-300">산업별 특성을 반영한 완전 통합 솔루션</p>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold mb-2 text-blue-300">• 협동로봇 기술</h4>
+                      <p className="text-sm text-slate-300">안전한 인간-로봇 협업 시스템</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+
+          const SectorView = () => {
+            const sector = sectors[selectedSector];
+            
+            return (
+              <div className="min-h-screen bg-slate-50">
+                {/* Header */}
+                <div className={`bg-gradient-to-r ${sector.color} text-white py-12 px-6`}>
+                  <div className="max-w-6xl mx-auto">
+                    <button
+                      onClick={() => setCurrentView('home')}
+                      className="flex items-center gap-2 mb-4 hover:bg-white/10 px-4 py-2 rounded-lg transition-colors"
+                    >
+                      <ChevronLeft size={20} />
+                      <span>홈으로 돌아가기</span>
+                    </button>
+                    <div className="flex items-center gap-4">
+                      <div className="text-5xl">{sector.icon}</div>
+                      <div>
+                        <h1 className="text-4xl font-bold mb-2">{sector.title}</h1>
+                        <p className="text-lg opacity-90">혁신적인 자동화 솔루션으로 생산성을 높이세요</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Process Cards */}
+                <div className="max-w-6xl mx-auto px-6 py-12">
+                  <h2 className="text-2xl font-bold mb-6 text-slate-800">자동화 가능한 공정</h2>
+                  <div className="grid md:grid-cols-2 gap-6">
+                    {sector.processes.map((process) => (
+                      <div key={process.id} className="bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden hover:shadow-xl transition-shadow">
+                        <div className="p-6">
+                          <h3 className="text-xl font-bold mb-3 text-slate-800">{process.name}</h3>
+                          
+                          <div className="mb-4 p-4 bg-red-50 rounded-lg border border-red-200">
+                            <p className="text-sm font-semibold text-red-700 mb-1">🚨 현재 문제점</p>
+                            <p className="text-sm text-red-600">{process.problem}</p>
+                          </div>
+
+                          <div className="mb-4 p-4 bg-green-50 rounded-lg border border-green-200">
+                            <p className="text-sm font-semibold text-green-700 mb-1">✅ 자동화 솔루션</p>
+                            <p className="text-sm text-green-600">{process.solution}</p>
+                          </div>
+
+                          <div className="mb-4">
+                            <p className="text-sm font-semibold text-slate-700 mb-2">📊 기대 효과</p>
+                            <div className="space-y-1">
+                              {process.benefits.map((benefit, idx) => (
+                                <div key={idx} className="flex items-center gap-2 text-sm text-slate-600">
+                                  <span className="w-1.5 h-1.5 bg-blue-500 rounded-full"></span>
+                                  {benefit}
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                          <div className="flex gap-2 pt-4 border-t">
+                            <button
+                              onClick={() => {
+                                setSelectedProcess(process);
+                                setCurrentView('estimate');
+                              }}
+                              className="flex-1 bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+                            >
+                              <FileText size={18} />
+                              견적서 보기
+                            </button>
+                            <button
+                              onClick={() => {
+                                setSelectedProcess(process);
+                                setCurrentView('diagram');
+                              }}
+                              className="flex-1 bg-purple-600 text-white py-3 rounded-lg font-semibold hover:bg-purple-700 transition-colors flex items-center justify-center gap-2"
+                            >
+                              <Bot size={18} />
+                              역할도 보기
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            );
+          };
+
+          const EstimateView = () => {
+            const sector = sectors[selectedSector];
+            const process = selectedProcess;
+            const totalEquipment = process.equipment.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            const grandTotal = totalEquipment + process.maintenance;
+            const annualSavings = Math.round(grandTotal / process.roi * 12);
+
+            return (
+              <div className="min-h-screen bg-slate-50">
+                {/* Header */}
+                <div className="bg-gradient-to-r from-slate-800 to-slate-900 text-white py-8 px-6">
+                  <div className="max-w-4xl mx-auto">
+                    <button
+                      onClick={() => setCurrentView('sector')}
+                      className="flex items-center gap-2 mb-4 hover:bg-white/10 px-4 py-2 rounded-lg transition-colors"
+                    >
+                      <ChevronLeft size={20} />
+                      <span>목록으로 돌아가기</span>
+                    </button>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h1 className="text-3xl font-bold mb-2">자동화 시스템 견적서</h1>
+                        <p className="text-slate-300">{sector.title} - {process.name}</p>
+                      </div>
+                      <Download className="text-slate-400" size={32} />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="max-w-4xl mx-auto px-6 py-8">
+                  {/* Company Info */}
+                  <div className="bg-white rounded-xl shadow-lg p-8 mb-6 border border-slate-200">
+                    <div className="flex justify-between items-start mb-6">
+                      <div>
+                        <h2 className="text-2xl font-bold text-slate-800 mb-2">㈜이노로보틱스</h2>
+                        <p className="text-slate-600 text-sm">정밀 자동화 시스템 전문 기업</p>
+                        <p className="text-slate-500 text-sm mt-1">견적일자: 2025년 11월 17일</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm text-slate-600">견적번호: INO-2025-{selectedSector.toUpperCase()}-{process.id.toUpperCase()}</p>
+                        <p className="text-sm text-slate-600">유효기간: 90일</p>
+                      </div>
+                    </div>
+
+                    {/* Problem & Solution Summary */}
+                    <div className="grid md:grid-cols-2 gap-4 mb-6">
+                      <div className="p-4 bg-red-50 rounded-lg border border-red-200">
+                        <h3 className="font-semibold text-red-700 mb-2">현재 문제점</h3>
+                        <p className="text-sm text-red-600">{process.problem}</p>
+                      </div>
+                      <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                        <h3 className="font-semibold text-blue-700 mb-2">제안 솔루션</h3>
+                        <p className="text-sm text-blue-600">{process.solution}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Equipment List */}
+                  <div className="bg-white rounded-xl shadow-lg p-8 mb-6 border border-slate-200">
+                    <h2 className="text-xl font-bold mb-6 text-slate-800">장비 및 시스템 구성</h2>
+                    <div className="overflow-x-auto">
+                      <table className="w-full">
+                        <thead>
+                          <tr className="border-b-2 border-slate-300">
+                            <th className="text-left py-3 px-4 text-slate-700 font-semibold">항목</th>
+                            <th className="text-center py-3 px-4 text-slate-700 font-semibold">수량</th>
+                            <th className="text-right py-3 px-4 text-slate-700 font-semibold">단가 (원)</th>
+                            <th className="text-right py-3 px-4 text-slate-700 font-semibold">금액 (원)</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {process.equipment.map((item, idx) => (
+                            <tr key={idx} className="border-b border-slate-200 hover:bg-slate-50">
+                              <td className="py-3 px-4 text-slate-700">{item.name}</td>
+                              <td className="py-3 px-4 text-center text-slate-600">{item.qty}</td>
+                              <td className="py-3 px-4 text-right text-slate-600">{formatPrice(item.price)}</td>
+                              <td className="py-3 px-4 text-right font-semibold text-slate-800">{formatPrice(item.price * item.qty)}</td>
+                            </tr>
+                          ))}
+                          <tr className="border-b border-slate-200 hover:bg-slate-50">
+                            <td className="py-3 px-4 text-slate-700">연간 유지보수 (1년차)</td>
+                            <td className="py-3 px-4 text-center text-slate-600">1</td>
+                            <td className="py-3 px-4 text-right text-slate-600">{formatPrice(process.maintenance)}</td>
+                            <td className="py-3 px-4 text-right font-semibold text-slate-800">{formatPrice(process.maintenance)}</td>
+                          </tr>
+                          <tr className="bg-blue-50 font-bold">
+                            <td colSpan="3" className="py-4 px-4 text-right text-lg text-slate-800">총 투자 금액</td>
+                            <td className="py-4 px-4 text-right text-xl text-blue-600">{formatPrice(grandTotal)}</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    
+                    <div className="mt-6 p-4 bg-slate-100 rounded-lg">
+                      <p className="text-sm text-slate-600 mb-2"><strong>포함 사항:</strong></p>
+                      <ul className="text-sm text-slate-600 space-y-1">
+                        <li>• 장비 운송 및 설치</li>
+                        <li>• 시운전 및 테스트</li>
+                        <li>• 작업자 교육 (이론 + 실습)</li>
+                        <li>• 1년간 무상 A/S 및 기술 지원</li>
+                        <li>• 예비 부품 1세트</li>
+                      </ul>
+                    </div>
+                  </div>
+
+                  {/* ROI Analysis */}
+                  <div className="bg-white rounded-xl shadow-lg p-8 mb-6 border border-slate-200">
+                    <h2 className="text-xl font-bold mb-6 text-slate-800">투자 효과 분석</h2>
+                    
+                    <div className="grid md:grid-cols-3 gap-4 mb-6">
+                      <div className="p-4 bg-gradient-to-br from-green-50 to-green-100 rounded-lg border border-green-200">
+                        <p className="text-sm text-green-700 mb-1">총 투자금액</p>
+                        <p className="text-2xl font-bold text-green-800">{formatPrice(grandTotal)}원</p>
+                      </div>
+                      <div className="p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg border border-blue-200">
+                        <p className="text-sm text-blue-700 mb-1">연간 절감액 (예상)</p>
+                        <p className="text-2xl font-bold text-blue-800">{formatPrice(annualSavings)}원</p>
+                      </div>
+                      <div className="p-4 bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg border border-purple-200">
+                        <p className="text-sm text-purple-700 mb-1">투자 회수 기간</p>
+                        <p className="text-2xl font-bold text-purple-800">{process.roi}개월</p>
+                      </div>
+                    </div>
+
+                    <div className="p-4 bg-slate-50 rounded-lg border border-slate-200">
+                      <h3 className="font-semibold text-slate-800 mb-3">기대 효과</h3>
+                      <div className="space-y-2">
+                        {process.benefits.map((benefit, idx) => (
+                          <div key={idx} className="flex items-start gap-3">
+                            <span className="text-green-500 mt-1">✓</span>
+                            <p className="text-slate-700">{benefit}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="mt-6 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                      <p className="text-sm text-yellow-800"><strong>💡 참고사항:</strong> 실제 효과는 운영 환경과 생산량에 따라 달라질 수 있습니다. 상세한 현장 진단 후 정확한 ROI를 산출해드립니다.</p>
+                    </div>
+                  </div>
+
+                  {/* Terms */}
+                  <div className="bg-white rounded-xl shadow-lg p-8 border border-slate-200">
+                    <h2 className="text-xl font-bold mb-4 text-slate-800">계약 조건</h2>
+                    <div className="space-y-3 text-sm text-slate-600">
+                      <div className="flex gap-3">
+                        <span className="font-semibold min-w-24">납품기간:</span>
+                        <span>계약 후 12-16주 (맞춤형 제작 기간 포함)</span>
+                      </div>
+                      <div className="flex gap-3">
+                        <span className="font-semibold min-w-24">지급조건:</span>
+                        <span>계약금 30% / 설치 후 40% / 검수 완료 후 30%</span>
+                      </div>
+                      <div className="flex gap-3">
+                        <span className="font-semibold min-w-24">보증기간:</span>
+                        <span>설치 완료 후 1년 (소모품 제외)</span>
+                      </div>
+                      <div className="flex gap-3">
+                        <span className="font-semibold min-w-24">교육:</span>
+                        <span>운영자 교육 3-5일 (이론 + 실습)</span>
+                      </div>
+                      <div className="flex gap-3">
+                        <span className="font-semibold min-w-24">유지보수:</span>
+                        <span>정기점검 연 4회, 긴급출동 24시간 이내</span>
+                      </div>
+                    </div>
+                    <div className="mt-6 pt-6 border-t border-slate-200">
+                      <p className="text-sm text-slate-500 text-center">본 견적서는 2025년 11월 17일 기준이며, 90일간 유효합니다.</p>
+                      <p className="text-sm text-slate-500 text-center mt-2">문의: 이노로보틱스 영업팀 | Tel: 031-XXX-XXXX | Email: sales@inorobotics.com</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          };
+
+          const DiagramView = () => {
+            const sector = sectors[selectedSector];
+            const process = selectedProcess;
+
+            const getRobotWorkflow = () => {
+              const workflows = {
+                'additive': [
+                  { step: 1, title: '부품 투입', desc: '3D 프린팅 완료된 금속 부품을 작업대에 배치', icon: '📥' },
+                  { step: 2, title: '3D 스캐닝', desc: '비전 시스템이 부품 전체를 스캔하여 서포트 위치 파악', icon: '📸' },
+                  { step: 3, title: 'AI 경로 생성', desc: '서포트 형상 분석 후 최적 제거 경로 자동 생성', icon: '🤖' },
+                  { step: 4, title: '로봇 작업', desc: '직교로봇이 생성된 경로를 따라 정밀 서포트 제거', icon: '⚙️' },
+                  { step: 5, title: '품질 검사', desc: '제거 완료 후 재스캔하여 품질 확인', icon: '✅' },
+                  { step: 6, title: '부품 배출', desc: '완성된 부품을 컨베이어로 이송', icon: '📤' }
+                ],
+                'welding': [
+                  { step: 1, title: '부품 로딩', desc: '용접할 부품을 포지셔너에 고정', icon: '📥' },
+                  { step: 2, title: '초기 스캔', desc: '열화상 카메라로 부품 온도 및 상태 확인', icon: '🌡️' },
+                  { step: 3, title: '용접 시작', desc: '6축 로봇이 사전 설정된 경로로 용접 수행', icon: '⚡' },
+                  { step: 4, title: '실시간 모니터링', desc: '아크 센서가 용접 품질을 실시간 감지', icon: '📊' },
+                  { step: 5, title: '경로 보정', desc: '센서 데이터 기반 용접 경로 자동 조정', icon: '🔄' },
+                  { step: 6, title: '검사 및 배출', desc: '최종 품질 검사 후 완성품 이송', icon: '✅' }
+                ],
+                'casting': [
+                  { step: 1, title: '주조품 투입', desc: '고온 주조품을 내열 컨베이어로 투입', icon: '🔥' },
+                  { step: 2, title: '냉각 대기', desc: '적정 온도까지 자동 냉각 (센서 감지)', icon: '❄️' },
+                  { step: 3, title: '표면 스캔', desc: '비전 시스템이 처리 필요 부위 식별', icon: '📸' },
+                  { step: 4, title: '자동 연마', desc: '내열 로봇이 그라인딩 작업 수행', icon: '⚙️' },
+                  { step: 5, title: '집진 처리', desc: '발생한 분진을 집진 시스템으로 자동 제거', icon: '💨' },
+                  { step: 6, title: '최종 검사', desc: '표면 품질 확인 후 완성품 배출', icon: '✅' }
+                ],
+                'flash': [
+                  { step: 1, title: '사출품 배출', desc: '사출기에서 완성된 제품이 컨베이어로 배출', icon: '📥' },
+                  { step: 2, title: 'AI 비전 검사', desc: '플래시 위치와 크기를 AI가 실시간 분석', icon: '👁️' },
+                  { step: 3, title: '경로 계산', desc: '각 제품별 최적 트리밍 경로 자동 생성', icon: '🧮' },
+                  { step: 4, title: '자동 트리밍', desc: '6축 로봇이 유연하게 플래시 제거', icon: '✂️' },
+                  { step: 5, title: '품질 확인', desc: '재검사를 통해 제거 완료 여부 확인', icon: '🔍' },
+                  { step: 6, title: '자동 분류', desc: '양품/불량품 자동 분류 후 포장', icon: '📦' }
+                ],
+                'rotation': [
+                  { step: 1, title: '금형 준비', desc: '회전 성형용 금형을 로봇이 자동 장착', icon: '🔧' },
+                  { step: 2, title: '원료 투입', desc: '설정된 양의 플라스틱 원료 자동 투입', icon: '📥' },
+                  { step: 3, title: '회전 성형', desc: 'PLC 제어로 최적 회전 및 가열 수행', icon: '🔄' },
+                  { step: 4, title: '온도 모니터링', desc: '실시간 센서로 온도 균일성 확인', icon: '🌡️' },
+                  { step: 5, title: '자동 냉각', desc: '냉각 시스템이 최적 시간 동안 냉각', icon: '❄️' },
+                  { step: 6, title: '금형 탈착', desc: '완성품 자동 탈착 및 다음 사이클 준비', icon: '✅' }
+                ],
+                'multi': [
+                  { step: 1, title: '제품 선택', desc: '터치스크린에서 생산할 제품 유형 선택', icon: '📱' },
+                  { step: 2, title: 'AI 자동 설정', desc: '소프트웨어가 해당 제품 설정 자동 로드', icon: '🤖' },
+                  { step: 3, title: '금형 교체', desc: '퀵체인지 시스템으로 금형 신속 교체', icon: '🔄' },
+                  { step: 4, title: '그리퍼 변경', desc: '모듈형 그리퍼 자동 교체 및 캘리브레이션', icon: '🦾' },
+                  { step: 5, title: '비전 정렬', desc: '비전 시스템이 새 제품 위치 자동 학습', icon: '👁️' },
+                  { step: 6, title: '생산 시작', desc: '설정 완료 후 즉시 생산 가능', icon: '▶️' }
+                ],
+                'packaging': [
+                  { step: 1, title: '제품 공급', desc: '다양한 크기의 식품이 컨베이어로 공급', icon: '🍱' },
+                  { step: 2, title: 'AI 인식', desc: '비전 시스템이 각 제품 크기/형태 식별', icon: '👁️' },
+                  { step: 3, title: '델타 로봇 피킹', desc: '고속 델타 로봇이 제품을 정확히 집음', icon: '🦾' },
+                  { step: 4, title: '적응형 그립', desc: '유연 그리퍼가 제품 형태에 맞춰 파지', icon: '🤲' },
+                  { step: 5, title: '중량 선별', desc: '이송 중 중량 측정으로 규격 확인', icon: '⚖️' },
+                  { step: 6, title: '자동 포장', desc: '포장 컨베이어로 이송하여 포장 완료', icon: '📦' }
+                ],
+                'hygiene': [
+                  { step: 1, title: '생산 완료', desc: '식품 가공 라인에서 제품 생산 완료', icon: '✅' },
+                  { step: 2, title: '로봇 자동 세척', desc: 'CIP 시스템으로 로봇 접촉부 세척', icon: '🧼' },
+                  { step: 3, title: '소독 처리', desc: '자동 소독 시스템으로 위생 처리', icon: '🦠' },
+                  { step: 4, title: '공기막 가동', desc: '교차오염 방지 공기막 시스템 작동', icon: '💨' },
+                  { step: 5, title: '위생 모니터링', desc: '센서가 실시간 위생 상태 확인', icon: '📊' },
+                  { step: 6, title: '다음 생산 준비', desc: '위생 기준 충족 시 다음 배치 시작', icon: '▶️' }
+                ],
+                'ergonomic': [
+                  { step: 1, title: '중량물 감지', desc: '센서가 투입할 중량물 위치 파악', icon: '📍' },
+                  { step: 2, title: '협동로봇 접근', desc: '작업자와 안전하게 협업하며 접근', icon: '🤝' },
+                  { step: 3, title: '힘 감지', desc: '토크 센서로 최적 파지력 자동 조절', icon: '💪' },
+                  { step: 4, title: '중량물 리프팅', desc: '로봇이 20kg 중량물을 안전하게 들어올림', icon: '⬆️' },
+                  { step: 5, title: '정밀 투입', desc: '목표 위치에 정확하게 투입', icon: '🎯' },
+                  { step: 6, title: '안전 복귀', desc: '작업 완료 후 안전 위치로 복귀', icon: '🔄' }
+                ]
+              };
+              return workflows[process.id] || [];
+            };
+
+            const workflow = getRobotWorkflow();
+
+            return (
+              <div className="min-h-screen bg-slate-50">
+                {/* Header */}
+                <div className="bg-gradient-to-r from-purple-600 to-purple-800 text-white py-8 px-6">
+                  <div className="max-w-6xl mx-auto">
+                    <button
+                      onClick={() => setCurrentView('sector')}
+                      className="flex items-center gap-2 mb-4 hover:bg-white/10 px-4 py-2 rounded-lg transition-colors"
+                    >
+                      <ChevronLeft size={20} />
+                      <span>목록으로 돌아가기</span>
+                    </button>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h1 className="text-3xl font-bold mb-2">로봇 작업 역할도</h1>
+                        <p className="text-purple-200">{sector.title} - {process.name}</p>
+                      </div>
+                      <Bot size={40} />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="max-w-6xl mx-auto px-6 py-8">
+                  {/* System Overview */}
+                  <div className="bg-white rounded-xl shadow-lg p-8 mb-6 border border-slate-200">
+                    <h2 className="text-xl font-bold mb-4 text-slate-800">시스템 개요</h2>
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                        <h3 className="font-semibold text-blue-700 mb-2">🎯 자동화 목표</h3>
+                        <p className="text-sm text-blue-600">{process.problem}</p>
+                      </div>
+                      <div className="p-4 bg-green-50 rounded-lg border border-green-200">
+                        <h3 className="font-semibold text-green-700 mb-2">⚙️ 적용 기술</h3>
+                        <p className="text-sm text-green-600">{process.solution}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Workflow Diagram */}
+                  <div className="bg-white rounded-xl shadow-lg p-8 mb-6 border border-slate-200">
+                    <h2 className="text-xl font-bold mb-6 text-slate-800">공정 흐름도</h2>
+                    
+                    <div className="space-y-4">
+                      {workflow.map((item, idx) => (
+                        <div key={idx} className="relative">
+                          <div className="flex items-start gap-4">
+                            {/* Step Number */}
+                            <div className="flex-shrink-0">
+                              <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-700 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg">
+                                {item.step}
+                              </div>
+                            </div>
+                            
+                            {/* Content */}
+                            <div className="flex-1 bg-gradient-to-r from-slate-50 to-white rounded-lg p-5 border-2 border-slate-200 hover:border-purple-300 transition-colors">
+                              <div className="flex items-center gap-3 mb-2">
+                                <span className="text-3xl">{item.icon}</span>
+                                <h3 className="text-lg font-bold text-slate-800">{item.title}</h3>
+                              </div>
+                              <p className="text-slate-600 ml-12">{item.desc}</p>
+                            </div>
+                          </div>
+                          
+                          {/* Arrow */}
+                          {idx < workflow.length - 1 && (
+                            <div className="flex justify-center my-2">
+                              <div className="w-0.5 h-8 bg-gradient-to-b from-purple-400 to-purple-600"></div>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* System Layout */}
+                  <div className="bg-white rounded-xl shadow-lg p-8 mb-6 border border-slate-200">
+                    <h2 className="text-xl font-bold mb-6 text-slate-800">시스템 배치도</h2>
+                    
+                    <div className="bg-slate-100 rounded-lg p-8 border-2 border-slate-300">
+                      <div className="grid grid-cols-3 gap-4 mb-6">
+                        <div className="col-span-1 bg-blue-200 rounded-lg p-6 border-2 border-blue-400 text-center">
+                          <div className="text-4xl mb-2">📥</div>
+                          <div className="font-bold text-blue-800">투입부</div>
+                          <div className="text-sm text-blue-600 mt-2">원자재/부품 공급</div>
+                        </div>
+                        <div className="col-span-1 bg-purple-200 rounded-lg p-6 border-2 border-purple-400 text-center">
+                          <div className="text-4xl mb-2">🤖</div>
+                          <div className="font-bold text-purple-800">로봇 작업 영역</div>
+                          <div className="text-sm text-purple-600 mt-2">자동화 공정 수행</div>
+                        </div>
+                        <div className="col-span-1 bg-green-200 rounded-lg p-6 border-2 border-green-400 text-center">
+                          <div className="text-4xl mb-2">📤</div>
+                          <div className="font-bold text-green-800">배출부</div>
+                          <div className="text-sm text-green-600 mt-2">완성품 이송</div>
+                        </div>
+                      </div>
+                      
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="bg-orange-200 rounded-lg p-4 border-2 border-orange-400">
+                          <div className="font-bold text-orange-800 mb-2">🛡️ 안전 시스템</div>
+                          <ul className="text-sm text-orange-700 space-y-1">
+                            <li>• 라이트 커튼</li>
+                            <li>• 비상정지 버튼</li>
+                            <li>• 안전 펜스</li>
+                          </ul>
+                        </div>
+                        <div className="bg-yellow-200 rounded-lg p-4 border-2 border-yellow-400">
+                          <div className="font-bold text-yellow-800 mb-2">👁️ 검사 시스템</div>
+                          <ul className="text-sm text-yellow-700 space-y-1">
+                            <li>• 비전 카메라</li>
+                            <li>• AI 품질 검사</li>
+                            <li>• 센서 모니터링</li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Key Components */}
+                  <div className="bg-white rounded-xl shadow-lg p-8 border border-slate-200">
+                    <h2 className="text-xl font-bold mb-6 text-slate-800">핵심 구성 요소</h2>
+                    
+                    <div className="grid md:grid-cols-2 gap-6">
+                      {process.equipment.slice(0, 4).map((item, idx) => (
+                        <div key={idx} className="flex items-start gap-4 p-4 bg-slate-50 rounded-lg border border-slate-200">
+                          <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg flex items-center justify-center text-white font-bold text-lg flex-shrink-0">
+                            {idx + 1}
+                          </div>
+                          <div>
+                            <h3 className="font-bold text-slate-800 mb-1">{item.name}</h3>
+                            <p className="text-sm text-slate-600">주요 기능을 담당하는 핵심 장비</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                      <p className="text-sm text-blue-800">
+                        <strong>💡 시스템 특징:</strong> 모든 구성 요소가 통합 제어 시스템을 통해 유기적으로 연동되어 최적의 자동화 성능을 제공합니다.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          };
+
+          return (
+            <div className="font-sans">
+              {currentView === 'home' && <HomePage />}
+              {currentView === 'sector' && <SectorView />}
+              {currentView === 'estimate' && <EstimateView />}
+              {currentView === 'diagram' && <DiagramView />}
+            </div>
+          );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<AutomationProposal />);
+    </script>
+</body>
+</html>
